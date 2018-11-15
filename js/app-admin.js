@@ -1,11 +1,9 @@
-var bmw_parser_Admin = new Vue({
-	el: '#admin-search-admin',
+var admin_search = new Vue({
+	el: '#admin-search',
 
 	data: {
-		url: '',
-		pagesData: null,
-		ready: false,
-		singleurl: '',
+		query: '',
+		searchResults: null,
 	},
 
 	mounted: function() {
@@ -13,24 +11,24 @@ var bmw_parser_Admin = new Vue({
 	},
 
 	methods: {
-		sendUrl() {
+		sendQuery() {
 			var form_data = new FormData
-			form_data.append('url', this.url)
-			axios.post(ajaxurl + '?action=pre_parse_run', form_data)
+			form_data.append('query', this.query)
+			axios.post(ajaxurl + '?action=wcst_admin_search', form_data)
 				.then(function (response) {
 					console.log(response);
-					this.pagesData = Array.from(response.data)
+					this.searchResults = Array.from(response.data)
 				}.bind(this))
 				.catch(function (error) {
 					console.log(error);
 				});
 		},
-		
+
 
 		shortString(str) {
 			return (str.length >= 55) ? str.substr(0, 55) + '...' : str
 		},
-		
+
 
 		timestampToDate(sec) {
 		    var t = new Date(1970, 0, 1)

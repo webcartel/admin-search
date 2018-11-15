@@ -36,6 +36,55 @@ $f1: 'Roboto', sans-serif;
 	display: none;
 }
 
-.bmw_parser-admin {
-	
+.admin-search {
+    margin: 0;
+    padding: 20px 20px 0 0;
+    max-width: 50%;
+    box-sizing: border-box;
+
+    & * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+	.search-input-block {
+        margin: 0 0 25px 0;
+
+        .search-input {
+            display: block;
+            padding: 7px 10px;
+            width: 100%;
+            font: 400 21px/24px $f1;
+
+            @include placeholder {
+                color: #999;
+            }
+        }
+    }
+
+    .search-results-block {
+        .search-result {
+            margin: 0 0 30px 0;
+
+            .title {
+                margin: 0 0 5px 0;
+
+                a {
+                    font: 400 21px/24px $f1;
+                    text-decoration: none;
+
+                    &:focus {
+                        box-shadow: none;
+                    }
+                }
+            }
+
+            .snippet {
+                p {
+                    font: 400 15px/21px $f1;
+                }
+            }
+        }
+    }
 }

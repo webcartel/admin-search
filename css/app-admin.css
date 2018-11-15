@@ -3,3 +3,39 @@
 
 #wpfooter {
   display: none; }
+
+.admin-search {
+  margin: 0;
+  padding: 20px 20px 0 0;
+  max-width: 50%;
+  box-sizing: border-box; }
+  .admin-search * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; }
+  .admin-search .search-input-block {
+    margin: 0 0 25px 0; }
+    .admin-search .search-input-block .search-input {
+      display: block;
+      padding: 7px 10px;
+      width: 100%;
+      font: 400 21px/24px "Roboto", sans-serif; }
+      .admin-search .search-input-block .search-input::-webkit-input-placeholder {
+        color: #999; }
+      .admin-search .search-input-block .search-input:-moz-placeholder {
+        color: #999; }
+      .admin-search .search-input-block .search-input::-moz-placeholder {
+        color: #999; }
+      .admin-search .search-input-block .search-input:-ms-input-placeholder {
+        color: #999; }
+  .admin-search .search-results-block .search-result {
+    margin: 0 0 30px 0; }
+    .admin-search .search-results-block .search-result .title {
+      margin: 0 0 5px 0; }
+      .admin-search .search-results-block .search-result .title a {
+        font: 400 21px/24px "Roboto", sans-serif;
+        text-decoration: none; }
+        .admin-search .search-results-block .search-result .title a:focus {
+          box-shadow: none; }
+    .admin-search .search-results-block .search-result .snippet p {
+      font: 400 15px/21px "Roboto", sans-serif; }
