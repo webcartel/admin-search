@@ -53,10 +53,10 @@ function admin_search_admin()
 
 		<div class="search-result" v-for="result in searchResults">
 			<div class="title">
-				<a href="#">{{ result.post_title }}</a>
+				<a href="#" v-html="result.post_title"></a>
 			</div>
 			<div class="snippet">
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque ipsa est reiciendis, animi quia cum quibusdam saepe fugiat quo quos similique rem autem consequuntur magnam assumenda voluptatum incidunt sed molestias.</p>
+				<p v-html="result.post_content"></p>
 			</div>
 		</div>
 
@@ -69,10 +69,19 @@ function admin_search_admin()
 
 function wcst_admin_search() {
 	if ( !empty($_POST['query']) && mb_strlen($_POST['query']) >= 3 ) {
+
 		global $wpdb;
 
 		$search_query = trim(mb_strtolower($_POST['query']));
-		$search_results = $wpdb->get_results("SELECT ID, post_title FROM $wpdb->posts WHERE `post_title` LIKE '%".$search_query."%' AND post_type = 'page' AND post_status = 'publish'", ARRAY_A);
+
+		$search_results = $wpdb->get_results("SELECT ID, post_title, post_content FROM $wpdb->posts WHERE `post_title` LIKE '%".$search_query."%' AND post_type = 'page' AND post_status = 'publish'", ARRAY_A);
+
+		foreach ($search_results as $key => $result) {
+			$post_title = preg_replace('/'.$search_query.'/Uis', '<strong class="marker">${0}</strong>', strip_tags($result['post_title']));
+			$post_content = preg_replace('/'.$search_query.'/Uis', '<strong class="marker">${0}</strong>', strip_tags($result['post_content']));
+			$search_results[$key]['post_title'] = $post_title;
+			$search_results[$key]['post_content'] = $post_content;
+		}
 
 		echo json_encode($search_results);
 		exit();

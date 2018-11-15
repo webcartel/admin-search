@@ -77,12 +77,20 @@ $f1: 'Roboto', sans-serif;
                     &:focus {
                         box-shadow: none;
                     }
+
+                    .marker {
+                        color: #ff6000;
+                    }
                 }
             }
 
             .snippet {
                 p {
                     font: 400 15px/21px $f1;
+
+                    .marker {
+                        color: #ff6000;
+                    }
                 }
             }
         }

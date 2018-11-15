@@ -37,5 +37,9 @@
         text-decoration: none; }
         .admin-search .search-results-block .search-result .title a:focus {
           box-shadow: none; }
+        .admin-search .search-results-block .search-result .title a .marker {
+          color: #ff6000; }
     .admin-search .search-results-block .search-result .snippet p {
       font: 400 15px/21px "Roboto", sans-serif; }
+      .admin-search .search-results-block .search-result .snippet p .marker {
+        color: #ff6000; }
