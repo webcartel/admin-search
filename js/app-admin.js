@@ -5,6 +5,7 @@ var admin_search = new Vue({
 		query: '',
 		searchResults: null,
 		waiting: false,
+		lastquery: '',
 	},
 
 	mounted: function() {
@@ -13,13 +14,13 @@ var admin_search = new Vue({
 
 	methods: {
 		sendQuery() {
-			var lastquery = this.query
+			this.lastquery = this.query
+			this.waiting = true
+			this.searchResults = null
 			
 			setTimeout(function() {
-				this.waiting = true
-				this.searchResults = null
 
-				if ( this.query = lastquery ) {
+				if ( this.query == this.lastquery ) {
 					var form_data = new FormData
 					form_data.append('query', this.query)
 					axios.post(ajaxurl + '?action=wcst_admin_search', form_data)

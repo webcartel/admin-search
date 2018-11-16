@@ -77,7 +77,7 @@ function admin_search_admin()
 
 function wcst_admin_search() {
 	if ( !empty($_POST['query']) && mb_strlen($_POST['query']) >= 3 ) {
-		sleep(3);
+		// sleep(3);
 
 		global $wpdb;
 
