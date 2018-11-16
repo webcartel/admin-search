@@ -17,7 +17,7 @@ var admin_search = new Vue({
 			this.lastquery = this.query
 			this.waiting = true
 			this.searchResults = null
-			
+
 			setTimeout(function() {
 
 				if ( this.query == this.lastquery ) {
@@ -27,11 +27,11 @@ var admin_search = new Vue({
 						.then(function (response) {
 							this.searchResults = Array.from(response.data)
 							this.waiting = false
-							// console.log(response)
+							console.log(response)
 						}.bind(this))
 						.catch(function (error) {
 							this.waiting = false
-							// console.log(error)
+							console.log(error)
 						});
 				}
 			}.bind(this), 1000)

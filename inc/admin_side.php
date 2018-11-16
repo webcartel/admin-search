@@ -46,7 +46,7 @@ function admin_search_admin()
 	echo '
 <div id="admin-search" class="admin-search">
 	<div class="search-input-block">
-		<input type="text" name="query" class="search-input" placeholder="Search" @keyup="sendQuery()" v-model="query">
+		<input type="text" name="query" class="search-input" placeholder="Search" autocomplete="off" @keyup="sendQuery()" v-model="query">
 	</div>
 
 	<div class="search-loader" v-if="waiting">
@@ -61,7 +61,7 @@ function admin_search_admin()
 
 		<div class="search-result" v-for="result in searchResults">
 			<div class="title">
-				<a href="#" v-html="result.post_title"></a>
+				<a :href="result.post_url" v-html="result.post_title"></a>
 			</div>
 			<div class="snippet">
 				<p v-html="result.post_content"></p>
@@ -83,13 +83,29 @@ function wcst_admin_search() {
 
 		$search_query = trim(mb_strtolower($_POST['query']));
 
-		$search_results = $wpdb->get_results("SELECT ID, post_title, post_content FROM $wpdb->posts WHERE `post_title` LIKE '%".$search_query."%' AND post_type = 'page' AND post_status = 'publish'", ARRAY_A);
+		$search_results = $wpdb->get_results("SELECT ID, post_title, post_content FROM $wpdb->posts WHERE post_title LIKE '%".$search_query."%' AND post_type = 'page' AND post_status = 'publish'", ARRAY_A);
 
 		foreach ($search_results as $key => $result) {
-			$post_title = preg_replace('/'.$search_query.'/Uis', '<strong class="marker">${0}</strong>', strip_tags($result['post_title']));
-			$post_content = preg_replace('/'.$search_query.'/Uis', '<strong class="marker">${0}</strong>', strip_tags($result['post_content']));
+			// title
+			$post_title = mb_eregi_replace($search_query, '<strong class="marker">\\0</strong>', $result['post_title'] );
 			$search_results[$key]['post_title'] = $post_title;
+			// ----
+			
+			// content
+			$post_content_source = mb_eregi_replace('[\r\n]*', '', $result['post_content']);
+			$post_content_source = mb_eregi_replace('(<[^>]*>)', '', $post_content_source);
+
+			preg_match_all('/(.{0,40}'.$search_query.'.{0,40})/ui', $post_content_source, $post_content_parts);
+			foreach ($post_content_parts[1] as $part) {
+				$post_content .= ' ...'.mb_eregi_replace($search_query, '<strong class="marker">\\0</strong>', $part).'... ';
+			}
+
 			$search_results[$key]['post_content'] = $post_content;
+			// ----
+
+			// edit_url
+			$search_results[$key]['post_url'] = get_edit_post_link($result['ID'], '');
+			// ----
 		}
 
 		echo json_encode($search_results);
