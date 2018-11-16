@@ -49,6 +49,14 @@ function admin_search_admin()
 		<input type="text" name="query" class="search-input" placeholder="Search" @keyup="sendQuery()" v-model="query">
 	</div>
 
+	<div class="search-loader" v-if="waiting">
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+
 	<div class="search-results-block" v-if="searchResults != null">
 
 		<div class="search-result" v-for="result in searchResults">
@@ -69,6 +77,7 @@ function admin_search_admin()
 
 function wcst_admin_search() {
 	if ( !empty($_POST['query']) && mb_strlen($_POST['query']) >= 3 ) {
+		sleep(3);
 
 		global $wpdb;
 

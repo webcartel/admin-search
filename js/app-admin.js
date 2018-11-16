@@ -4,6 +4,7 @@ var admin_search = new Vue({
 	data: {
 		query: '',
 		searchResults: null,
+		waiting: false,
 	},
 
 	mounted: function() {
@@ -12,16 +13,27 @@ var admin_search = new Vue({
 
 	methods: {
 		sendQuery() {
-			var form_data = new FormData
-			form_data.append('query', this.query)
-			axios.post(ajaxurl + '?action=wcst_admin_search', form_data)
-				.then(function (response) {
-					console.log(response);
-					this.searchResults = Array.from(response.data)
-				}.bind(this))
-				.catch(function (error) {
-					console.log(error);
-				});
+			var lastquery = this.query
+			
+			setTimeout(function() {
+				this.waiting = true
+				this.searchResults = null
+
+				if ( this.query = lastquery ) {
+					var form_data = new FormData
+					form_data.append('query', this.query)
+					axios.post(ajaxurl + '?action=wcst_admin_search', form_data)
+						.then(function (response) {
+							this.searchResults = Array.from(response.data)
+							this.waiting = false
+							// console.log(response)
+						}.bind(this))
+						.catch(function (error) {
+							this.waiting = false
+							// console.log(error)
+						});
+				}
+			}.bind(this), 1000)
 		},
 
 
