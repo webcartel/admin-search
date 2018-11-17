@@ -5,14 +5,23 @@
   display: none; }
 
 .admin-search {
+  display: flex;
   margin: 0;
   padding: 20px 20px 0 0;
-  max-width: 50%;
+  width: 100%;
   box-sizing: border-box; }
   .admin-search * {
     margin: 0;
     padding: 0;
     box-sizing: border-box; }
+  .admin-search .search-block {
+    flex: 1;
+    padding: 0 10px 0 0;
+    max-width: 50%; }
+  .admin-search .settimgs-block {
+    flex: 1;
+    padding: 0 0 0 10px;
+    max-width: 50%; }
   .admin-search .search-input-block {
     margin: 0 0 25px 0; }
     .admin-search .search-input-block .search-input {
@@ -75,7 +84,49 @@
           box-shadow: none; }
         .admin-search .search-results-block .search-result .title a .marker {
           color: #ff6000; }
+      .admin-search .search-results-block .search-result .title .post_type {
+        position: relative;
+        top: -2px;
+        display: inline-block;
+        margin: 0 0 0 5px;
+        padding: 0 10px 2px 10px;
+        line-height: 20px;
+        color: #fff;
+        text-transform: capitalize;
+        background: #2ca02c;
+        border-radius: 50px; }
     .admin-search .search-results-block .search-result .snippet p {
       font: 400 15px/21px "Roboto", sans-serif; }
       .admin-search .search-results-block .search-result .snippet p .marker {
         color: #ff6000; }
+  .admin-search .select-post-types .post-type {
+    display: flex;
+    align-items: center;
+    margin: 0 0 10px 0; }
+    .admin-search .select-post-types .post-type .post-type-checkbox {
+      position: relative;
+      display: inline-block;
+      margin: 0 10px 0 0;
+      width: 40px;
+      height: 20px;
+      background: #999;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s; }
+      .admin-search .select-post-types .post-type .post-type-checkbox:before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff; }
+      .admin-search .select-post-types .post-type .post-type-checkbox.active {
+        background: #0073AA; }
+        .admin-search .select-post-types .post-type .post-type-checkbox.active:before {
+          left: auto;
+          right: 2px; }
+    .admin-search .select-post-types .post-type .post-type-label {
+      font: 400 14px/18px "Roboto", sans-serif;
+      text-transform: capitalize; }

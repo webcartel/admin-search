@@ -45,33 +45,62 @@ function admin_search_admin()
 {
 	echo '
 <div id="admin-search" class="admin-search">
-	<div class="search-input-block">
-		<input type="text" name="query" class="search-input" placeholder="Search" autocomplete="off" @keyup="sendQuery()" v-model="query">
-	</div>
 
-	<div class="search-loader" v-if="waiting">
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-	</div>
-
-	<div class="search-results-block" v-if="searchResults != null">
-
-		<div class="search-result" v-for="result in searchResults">
-			<div class="title">
-				<a :href="result.post_url" v-html="result.post_title"></a>
-			</div>
-			<div class="snippet">
-				<p v-html="result.post_content"></p>
-			</div>
+	<div class="search-block">
+		<div class="search-input-block">
+			<input type="text" name="query" class="search-input" placeholder="Search" autocomplete="off" @keyup="sendQuery()" v-model="query">
 		</div>
 
+		<div class="search-loader" v-if="waiting">
+			<span></span>
+			<span></span>
+			<span></span>
+			<span></span>
+			<span></span>
+		</div>
+
+		<div class="search-results-block" v-if="searchResults != null">
+
+			<div class="search-result" v-for="result in searchResults">
+				<div class="title">
+					<a :href="result.post_url" v-html="result.post_title"></a>
+					<span class="post_type">{{ result.post_type }}</span>
+				</div>
+				<div class="snippet">
+					<p v-html="result.post_content"></p>
+				</div>
+			</div>
+
+		</div>
 	</div>
+
+	<div class="settimgs-block">
+		<div class="select-post-types">
+			<div class="post-type" v-for="type in postTypes">
+				<span class="post-type-checkbox" :class="{ active: type.isActive }" @click="type.isActive = false"></span>
+				<span class="post-type-label">{{ type.name }}</span>
+			</div>
+		</div>
+	</div>
+
 </div>
 ';
 }
+
+
+
+function wcst_admin_search_post_types()
+{
+	$post_types = get_post_types(array('public' => true, '_builtin' => false), 'names', 'or');
+	foreach ($post_types as $key => $post_type) {
+		$n_post_types[$key]['name'] = $post_type;
+		$n_post_types[$key]['isActive'] = true;
+	}
+
+	echo json_encode( $n_post_types );
+	exit();
+}
+add_action( 'wp_ajax_wcst_admin_search_post_types', 'wcst_admin_search_post_types' );
 
 
 
@@ -81,7 +110,7 @@ function wcst_admin_search() {
 
 		global $wpdb;
 
-		$search_query = trim(mb_strtolower($_POST['query']));
+		$search_query = mb_strtolower($_POST['query']);
 
 		$search_results = $wpdb->get_results("SELECT ID, post_title, post_content FROM $wpdb->posts WHERE post_title LIKE '%".$search_query."%' AND post_type = 'page' AND post_status = 'publish'", ARRAY_A);
 
@@ -96,7 +125,8 @@ function wcst_admin_search() {
 			$post_content_source = mb_eregi_replace('(<[^>]*>)', '', $post_content_source);
 
 			preg_match_all('/(.{0,40}'.$search_query.'.{0,40})/ui', $post_content_source, $post_content_parts);
-			foreach ($post_content_parts[1] as $part) {
+			$post_content = '';
+			foreach (array_slice($post_content_parts[1], 0, 3, true) as $part) {
 				$post_content .= ' ...'.mb_eregi_replace($search_query, '<strong class="marker">\\0</strong>', $part).'... ';
 			}
 
@@ -106,6 +136,8 @@ function wcst_admin_search() {
 			// edit_url
 			$search_results[$key]['post_url'] = get_edit_post_link($result['ID'], '');
 			// ----
+
+			$search_results[$key]['post_type'] = get_post_type($result['ID']);
 		}
 
 		echo json_encode($search_results);

@@ -5,36 +5,54 @@ var admin_search = new Vue({
 		query: '',
 		searchResults: null,
 		waiting: false,
-		lastquery: '',
+		lastQuery: '',
+		lastQueryTime: null,
+
+		postTypes: null,
 	},
 
 	mounted: function() {
+		axios.get(ajaxurl + '?action=wcst_admin_search_post_types')
+			.then(function (response) {
+				this.postTypes = response.data
+				// console.log(response)
+			}.bind(this))
+			.catch(function (error) {
+				console.log(error)
+			});
 
+		this.lastQueryTime = Date.now()
 	},
 
 	methods: {
 		sendQuery() {
-			this.lastquery = this.query
-			this.waiting = true
-			this.searchResults = null
+			this.lastQuery = this.query
 
-			setTimeout(function() {
+			if ( this.query.length >= 3 ) {
+				this.waiting = true
+				this.searchResults = null
 
-				if ( this.query == this.lastquery ) {
-					var form_data = new FormData
-					form_data.append('query', this.query)
-					axios.post(ajaxurl + '?action=wcst_admin_search', form_data)
-						.then(function (response) {
-							this.searchResults = Array.from(response.data)
-							this.waiting = false
-							console.log(response)
-						}.bind(this))
-						.catch(function (error) {
-							this.waiting = false
-							console.log(error)
-						});
+				if ( this.lastQueryTime + 1000 < Date.now() ) {
+
+					this.lastQueryTime = Date.now()
+
+					if ( this.query === this.lastQuery ) {
+						var form_data = new FormData
+						form_data.append('query', this.query)
+						axios.post(ajaxurl + '?action=wcst_admin_search', form_data)
+							.then(function (response) {
+								this.searchResults = Array.from(response.data)
+								this.waiting = false
+								console.log(response)
+							}.bind(this))
+							.catch(function (error) {
+								this.waiting = false
+								console.log(error)
+							}.bind(this));
+					}
+
 				}
-			}.bind(this), 1000)
+			}
 		},
 
 
