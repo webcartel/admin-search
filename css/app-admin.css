@@ -67,12 +67,15 @@
 @keyframes loader {
   0% {
     left: 0;
-    opacity: 0; }
+    opacity: 0;
+    transform: scale(0.5); }
   50% {
-    opacity: 1; }
+    opacity: 1;
+    transform: scale(1.5); }
   100% {
     left: calc(100% - 10px);
-    opacity: 0; } }
+    opacity: 0;
+    transform: scale(0.5); } }
   .admin-search .search-results-block .search-result {
     margin: 0 0 30px 0; }
     .admin-search .search-results-block .search-result .title {

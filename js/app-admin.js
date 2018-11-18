@@ -6,7 +6,7 @@ var admin_search = new Vue({
 		searchResults: null,
 		waiting: false,
 		lastQuery: '',
-		lastQueryTime: null,
+		lastQueryTime: 0,
 
 		postTypes: null,
 	},
@@ -14,8 +14,8 @@ var admin_search = new Vue({
 	mounted: function() {
 		axios.get(ajaxurl + '?action=wcst_admin_search_post_types')
 			.then(function (response) {
-				this.postTypes = response.data
-				// console.log(response)
+				this.postTypes = Object.values(response.data)
+				console.log(Object.values(response.data))
 			}.bind(this))
 			.catch(function (error) {
 				console.log(error)
@@ -32,14 +32,17 @@ var admin_search = new Vue({
 				this.waiting = true
 				this.searchResults = null
 
-				if ( this.lastQueryTime + 1000 < Date.now() ) {
+				if ( this.lastQueryTime + 5000 < Date.now() ) {
 
 					this.lastQueryTime = Date.now()
 
-					if ( this.query === this.lastQuery ) {
-						var form_data = new FormData
-						form_data.append('query', this.query)
-						axios.post(ajaxurl + '?action=wcst_admin_search', form_data)
+					if ( this.query.length === this.lastQuery.length ) {
+						var request = {
+							query: this.query,
+							post_types: this.postTypes
+						}
+
+						axios.post(ajaxurl + '?action=wcst_admin_search', request)
 							.then(function (response) {
 								this.searchResults = Array.from(response.data)
 								this.waiting = false
@@ -50,8 +53,14 @@ var admin_search = new Vue({
 								console.log(error)
 							}.bind(this));
 					}
-
+					else {
+						console.log(this.query);
+					}
 				}
+			}
+			else {
+				this.waiting = false
+				this.searchResults = null
 			}
 		},
 

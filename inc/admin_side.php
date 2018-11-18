@@ -48,7 +48,7 @@ function admin_search_admin()
 
 	<div class="search-block">
 		<div class="search-input-block">
-			<input type="text" name="query" class="search-input" placeholder="Search" autocomplete="off" @keyup="sendQuery()" v-model="query">
+			<input type="text" name="query" class="search-input" placeholder="Search" autocomplete="off" autofocus @keyup="sendQuery()" v-model="query">
 		</div>
 
 		<div class="search-loader" v-if="waiting">
@@ -77,7 +77,7 @@ function admin_search_admin()
 	<div class="settimgs-block">
 		<div class="select-post-types">
 			<div class="post-type" v-for="type in postTypes">
-				<span class="post-type-checkbox" :class="{ active: type.isActive }" @click="type.isActive = false"></span>
+				<span class="post-type-checkbox" :class="{ active: type.is_active }" @click="type.is_active ? type.is_active = false : type.is_active = true"></span>
 				<span class="post-type-label">{{ type.name }}</span>
 			</div>
 		</div>
@@ -94,7 +94,7 @@ function wcst_admin_search_post_types()
 	$post_types = get_post_types(array('public' => true, '_builtin' => false), 'names', 'or');
 	foreach ($post_types as $key => $post_type) {
 		$n_post_types[$key]['name'] = $post_type;
-		$n_post_types[$key]['isActive'] = true;
+		$n_post_types[$key]['is_active'] = true;
 	}
 
 	echo json_encode( $n_post_types );
@@ -105,14 +105,22 @@ add_action( 'wp_ajax_wcst_admin_search_post_types', 'wcst_admin_search_post_type
 
 
 function wcst_admin_search() {
+	$_POST = json_decode(file_get_contents('php://input'), true);
+
 	if ( !empty($_POST['query']) && mb_strlen($_POST['query']) >= 3 ) {
-		// sleep(3);
+
+		foreach ($_POST['post_types'] as $type) {
+			if ( $type['is_active'] === true ) {
+				$post_type_array[] = $type['name'];
+			}
+		}
+		$post_type = implode("', '", $post_type_array);
 
 		global $wpdb;
 
 		$search_query = mb_strtolower($_POST['query']);
 
-		$search_results = $wpdb->get_results("SELECT ID, post_title, post_content FROM $wpdb->posts WHERE post_title LIKE '%".$search_query."%' AND post_type = 'page' AND post_status = 'publish'", ARRAY_A);
+		$search_results = $wpdb->get_results("SELECT ID, post_title, post_content FROM $wpdb->posts WHERE post_title LIKE '%".$search_query."%' AND post_type IN ('".$post_type."') AND post_status = 'publish'", ARRAY_A);
 
 		foreach ($search_results as $key => $result) {
 			// title
